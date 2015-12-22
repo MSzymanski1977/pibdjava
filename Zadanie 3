@@ -1,0 +1,225 @@
+package lab3;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+
+import java.awt.*;
+import javax.swing.ImageIcon;
+
+public class lab3 extends Frame implements WindowListener, ActionListener 
+{
+	
+	Panel p1,p2,p3,p4,p5;
+	Button przycisk;	
+	TextField text;
+	Label etykieta,etykieta1;
+	Choice wybor;
+	Checkbox tic1,tic2,rb1,rb2,rb_zaz;
+	CheckboxGroup grupa_przel;
+	Scrollbar suwak;
+	MenuBar pasek_menu;
+	Menu menu;
+	MenuItem el_men1,el_men2;
+	
+	String znaki="",przerwa="",znaki_wysw="";
+	double pamiec=0,argument=0;
+	String dzialanie;
+	
+	
+	public lab3(int x,int y,int width,int breadth) throws HeadlessException 
+	{
+		
+		super();
+		
+		pasek_menu = new MenuBar();
+		menu = new Menu("Menu");
+		el_men1 = new MenuItem("Pozycja 1");
+		el_men2 = new MenuItem("Pozycja 2");
+		el_men1.addActionListener(this);
+		el_men2.addActionListener(this);
+		menu.add(el_men1);
+		menu.add(el_men2);
+		pasek_menu.add(menu);
+		this.setMenuBar(pasek_menu);
+		
+		
+		
+		
+		p2 = new Panel();
+		przycisk = new Button("Przycisk");
+		przycisk.setVisible(true);
+		przycisk.addActionListener(this);
+		wybor = new Choice();
+		wybor.setVisible(true);
+		wybor.add("Za");
+		wybor.add("Przeciw");
+		wybor.add("Nie wiem");
+		etykieta1 = new Label();
+		etykieta1.setVisible(true);
+		p2.setLayout(new GridLayout(3,1));
+		p2.add(przycisk);
+		p2.add(wybor);
+		p2.add(etykieta1);
+		this.add(p2);
+		
+		p3 = new Panel();
+		p3.setVisible(true);
+		grupa_przel = new CheckboxGroup();
+	    rb1 = new Checkbox("Opcja 1",grupa_przel,false);
+	    rb1.setVisible(true);
+	    rb2 = new Checkbox("Opcja 2",grupa_przel,false);
+	    rb2.setVisible(true);
+	    p3.setLayout(new FlowLayout());
+	    p3.add(rb1);
+	    p3.add(rb2);
+	    this.add(p3);
+	    
+		p4 = new Panel();
+		p4.setVisible(true);
+		tic1 = new Checkbox();
+		tic1.setVisible(true);
+		tic1.setLabel("Poz.1");
+	    tic2 = new Checkbox();
+	    tic2.setLabel("Poz.2");
+	    tic2.setVisible(true);
+	    p4.setLayout(new FlowLayout());
+	    p4.add(tic1);
+	    p4.add(tic2);
+	    this.add(p4);
+		
+		p5 = new Panel();
+		text = new TextField();
+		text.setVisible(true);
+		text.addActionListener(this);
+		etykieta = new Label("Etykieta");
+		etykieta.setVisible(true);
+		p5.add(text);
+		p5.add(etykieta);
+		p5.setLayout(new GridLayout(2,1));
+		this.add(p5);
+		
+		setBounds(x, y, width,breadth);
+		setVisible(true);
+		this.addWindowListener(this);
+		this.setTitle("LAB3");
+		this.setLayout(new GridLayout(2,2));
+		//suwak = new Scrollbar(Scrollbar.VERTICAL,0,60,0,this.getHeight());
+		//suwak.setVisible(true);
+		//this.add(suwak);
+		
+		
+
+		
+	}
+	@Override
+	public void actionPerformed(ActionEvent arg0) 
+	{
+
+		Object zrodlo = arg0.getSource();
+		
+		if (zrodlo==przycisk)
+		{
+			if (grupa_przel.getSelectedCheckbox()==rb1)
+				{
+					p3.setBackground(Color.BLUE);			
+				}
+			if (grupa_przel.getSelectedCheckbox()==rb2)
+				{
+					p3.setBackground(Color.GREEN);
+				}
+			
+			if (tic2.getState()&&tic2.getState())
+				{
+					p4.setBackground(Color.CYAN);
+				}
+			if (tic1.getState()==false&&tic2.getState()==false)
+				{
+					p4.setBackground(Color.RED);
+				}
+			if (tic1.getState()==true&&tic2.getState()==false)
+				{
+					p4.setBackground(Color.DARK_GRAY);
+				}
+			if (tic1.getState()==false&&tic2.getState()==true)
+				{
+					p4.setBackground(Color.WHITE);
+				}
+			        String data = "Wybor: " 
+		            + wybor.getItem(wybor.getSelectedIndex());
+		            etykieta1.setText(data);
+		}
+		
+		
+		
+		if (zrodlo==el_men1)
+		{
+			this.setBounds(this.getX()-100, this.getY()-100, 300, 300);
+		}
+		if (zrodlo==el_men2)
+		{
+			this.setBounds(this.getX()+100, this.getY()+100, 300, 300);
+		}
+		if (zrodlo==text)
+		{
+			etykieta.setText(text.getText());
+		}
+	    
+		
+		//przycisk.setLocation(przycisk.getX()+70,przycisk.getY()+70);
+		
+
+	}
+
+	@Override
+	public void windowActivated(WindowEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void windowClosed(WindowEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void windowClosing(WindowEvent e) 
+	{
+		System.exit(0);
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void windowDeactivated(WindowEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void windowDeiconified(WindowEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void windowIconified(WindowEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void windowOpened(WindowEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public static void main(String[] args) 
+	{
+		lab3 Okno = new lab3(100,100,250,250);
+		
+	}
+
+}
