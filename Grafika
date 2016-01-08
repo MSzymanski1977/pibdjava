@@ -1,0 +1,126 @@
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.image.*;
+import java.io.*;
+import javax.imageio.*;
+import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
+public class Grafika extends JFrame implements ActionListener, WindowListener
+{
+	MenuBar pasek_menu;
+	Menu menu,menu1;
+	MenuItem el_men1,el_men2,el_men3,el_men4,el_men5;
+    JScrollBar suwak_pion;
+    JPanel skalowanie,czyszczenie;
+    JFileChooser wp;
+    BufferedImage conv_img=null,org_img=null;
+    Dimension wymiaryMax;
+    int pocz_pow=255;
+	public Grafika() throws HeadlessException 
+	{
+		super("obrazek");			
+        this.setVisible(true);
+        this.setSize(200,100);
+		this.setResizable(false);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		pasek_menu = new MenuBar();
+		
+		menu1 = new Menu("Plik");
+		
+		el_men4 = new MenuItem("Otworz");
+		
+		el_men4.addActionListener(this);
+		
+		menu1.add(el_men4);
+		
+	    pasek_menu.add(menu1);
+		
+		this.setMenuBar(pasek_menu);
+		
+		
+	}
+	@Override
+	public void windowActivated(WindowEvent arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void windowClosed(WindowEvent arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void windowClosing(WindowEvent arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void windowDeactivated(WindowEvent arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void windowDeiconified(WindowEvent arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void windowIconified(WindowEvent arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void windowOpened(WindowEvent arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) 
+	{
+		Object zrodlo = e.getSource();
+
+		if (zrodlo==el_men4)
+		{
+			wp = new JFileChooser();
+			FileNameExtensionFilter filtr = new FileNameExtensionFilter("Pliki *.jpg","jpg");
+	        wp.addChoosableFileFilter(filtr);
+	        int wartZwroc = wp.showOpenDialog(Grafika.this);
+	        if (wartZwroc == JFileChooser.APPROVE_OPTION)
+	       {
+	        	try
+				{
+	        		File plik = wp.getSelectedFile();
+	        		org_img = ImageIO.read(plik);
+	        		conv_img=org_img;
+	        		pocz_pow=255;
+	     		    Grafika1 grafika1 = new Grafika1(org_img,wp.getSelectedFile().getName());
+	        		
+				}
+	        catch (IOException exc)
+				{
+					System.err.println("Blad odczytu"); 
+					exc.printStackTrace();
+				}
+	        }
+	        
+		}
+
+
+	}
+
+
+	public static void main(String[] args) 
+	{
+		
+		Grafika grafika=new Grafika();
+	}
+
+}
