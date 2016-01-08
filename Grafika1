@@ -1,0 +1,199 @@
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.image.*;
+import java.io.*;
+import javax.imageio.*;
+import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
+public class Grafika1 extends JFrame implements  AdjustmentListener, MouseWheelListener, ActionListener
+{
+	MenuBar pasek_menu;
+	Menu menu,menu1;
+	MenuItem el_men1,el_men2,el_men3,el_men4,el_men5;
+    JScrollBar suwak_pion;
+    JPanel skalowanie;
+    JFileChooser wp;
+    BufferedImage conv_img=null,org_img=null;
+    Dimension wymiaryMax;
+    int pocz_pow=255;
+	
+	public Grafika1(BufferedImage img,String name) throws HeadlessException 
+	{
+		super(name);			
+		this.setVisible(true);
+		this.setResizable(false);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		pasek_menu = new MenuBar();
+		menu = new Menu("Konwersja");
+		menu1 = new Menu("Plik");
+		el_men1 = new MenuItem("Konwersja na biało/czarny");
+		el_men2 = new MenuItem("Konwersja szary na 24bit");
+		el_men3 = new MenuItem("Obrazek wyjsciowy");
+		
+		el_men5 = new MenuItem("Zapisz");
+		el_men1.addActionListener(this);
+		el_men2.addActionListener(this);
+		el_men3.addActionListener(this);
+		
+		el_men5.addActionListener(this);
+		menu.add(el_men1);
+		menu.add(el_men2);
+		menu.add(el_men3);
+		
+		menu1.add(el_men5);
+	    pasek_menu.add(menu1);
+		pasek_menu.add(menu);
+		suwak_pion= new JScrollBar(JScrollBar.VERTICAL,255,0,0,255);
+	    suwak_pion.addAdjustmentListener(this);
+		suwak_pion.setVisible(true);
+		this.add(suwak_pion,BorderLayout.EAST);
+		this.setMenuBar(pasek_menu);
+		this.addMouseWheelListener(this);
+		org_img=img;
+		conv_img=img;
+		skalowanie = new Skalowanie(255,conv_img);
+		this.add(skalowanie);
+		this.pack();
+		
+	}
+    
+	@Override
+	public void actionPerformed(ActionEvent e) 
+	{
+		Object zrodlo = e.getSource();
+		if (zrodlo==el_men1)
+		{	
+			if (org_img!=null)
+			{
+				skalowanie.setVisible(false);
+				this.remove(skalowanie);
+				conv_img = this.color_BW(org_img);
+				skalowanie = new Skalowanie(255,conv_img);
+				this.add(skalowanie);
+				skalowanie.setVisible(true);
+				//this.pack();
+			
+			
+			}
+		}
+		if (zrodlo==el_men2)
+		{
+			if (org_img!=null)
+			{	
+				skalowanie.setVisible(false);
+				this.remove(skalowanie);
+				conv_img = this.grey_Bit24(org_img);
+				skalowanie = new Skalowanie(255,conv_img);
+				skalowanie.setVisible(true);
+				this.add(skalowanie);
+				//this.pack();
+			}
+		}
+		if (zrodlo==el_men3)
+		{
+			if (org_img!=null)
+			{
+				skalowanie.setVisible(false);
+				this.remove(skalowanie);
+				conv_img=org_img;
+				skalowanie = new Skalowanie(255,org_img);
+				this.add(skalowanie);
+				skalowanie.setVisible(true);
+				//this.pack();
+
+			}
+		}
+		
+		if (zrodlo==el_men5)
+		{
+			if (org_img!=null)
+			{
+				wp = new JFileChooser();
+				FileNameExtensionFilter filtr = new FileNameExtensionFilter("Pliki *.jpg","jpg");
+	        	wp.addChoosableFileFilter(filtr);
+	        	int wartZwroc = wp.showSaveDialog(Grafika1.this);
+	        	if (wartZwroc == JFileChooser.APPROVE_OPTION)
+	        	{
+	        		try
+					{
+	        			File plik = wp.getSelectedFile();
+	        			ImageIO.write(conv_img,"jpg",new File(wp.getSelectedFile().getPath()));
+	   
+	        			skalowanie = new Skalowanie(255,conv_img);	
+	        			skalowanie.setVisible(true);
+	        			this.add(skalowanie);
+	    		    	this.pack();
+					}
+	        		catch (IOException exc)
+					{
+						System.err.println("Blad zapisu"); 
+						exc.printStackTrace();
+					}
+	        	}
+	        
+			}
+		}
+	}
+	@Override
+	public void adjustmentValueChanged(AdjustmentEvent e)
+	{
+	   if (conv_img!=null)
+	   {
+		   skalowanie.setVisible(false);
+		   remove(skalowanie);
+		   skalowanie = new Skalowanie(e.getValue(),conv_img);
+		   skalowanie.setVisible(true);
+		   add(skalowanie);
+		  // this.pack();
+	   }   
+        	
+	}
+    
+    @Override
+	public void mouseWheelMoved(MouseWheelEvent event)
+	{
+    	if (conv_img!=null)
+ 	   {
+    		pocz_pow = pocz_pow + event.getWheelRotation();
+    	    //if (pocz_pow>255) {pocz_pow=255;}
+    		if (pocz_pow<0) { pocz_pow=0; }
+    		skalowanie.setVisible(false);
+    		this.remove(skalowanie);
+    		skalowanie = new Skalowanie(pocz_pow,conv_img);
+    		skalowanie.setVisible(true);
+  		  	this.add(skalowanie);
+  		    //this.pack();
+ 	   }
+
+	}
+	
+	public BufferedImage color_BW(BufferedImage img)
+	
+	{
+		int X=img.getWidth();
+		int Y=img.getHeight();		 
+		   Dimension wymiary = new Dimension(X,Y);
+		   setPreferredSize(wymiary);
+		BufferedImage czb = new BufferedImage(X,Y,BufferedImage.TYPE_BYTE_BINARY);
+		ColorConvertOp op = new ColorConvertOp(img.getColorModel().getColorSpace(),czb.getColorModel().getColorSpace(),null);
+		op.filter(img,czb);
+		return czb;
+	}
+public BufferedImage grey_Bit24(BufferedImage img)
+	
+	{
+	int X=img.getWidth();
+	int Y=img.getHeight();		 
+	   Dimension wymiary = new Dimension(X,Y);
+	   this.setPreferredSize(wymiary);
+		BufferedImage szary = new BufferedImage(X,Y,BufferedImage.TYPE_BYTE_GRAY);
+		ColorConvertOp op = new ColorConvertOp(img.getColorModel().getColorSpace(),szary.getColorModel().getColorSpace(),null);
+		op.filter(img,szary);
+		BufferedImage bit24 = new BufferedImage(X,Y,BufferedImage.TYPE_3BYTE_BGR);
+		ColorConvertOp op1 = new ColorConvertOp(szary.getColorModel().getColorSpace(),bit24.getColorModel().getColorSpace(),null);
+		op1.filter(szary,bit24);
+		return bit24;
+	}
+	
+}
