@@ -1,0 +1,42 @@
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+import javax.swing.JFileChooser;
+import javax.swing.JPanel;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
+public class Skalowanie extends JPanel
+{
+	BufferedImage img=null;
+	int szer,wys,skala1,X,Y,poczX,poczY;
+	public Skalowanie(int skala,BufferedImage image) 
+	{	
+			super();
+			skala1=skala;		
+			img=image;
+			X=img.getWidth();
+			Y=img.getHeight();		 
+			if ((X>800)||(Y>600))
+			{
+				X=800;
+				Y=600;
+			}
+			   Dimension wymiary = new Dimension(X,Y);
+			   this.setPreferredSize(wymiary);
+			
+	}
+	public void paintComponent(Graphics g)
+	{
+		Graphics2D obr_2D = (Graphics2D) g;
+		poczX=X/2-X*skala1/255/2;
+    	poczY=Y/2-Y*skala1/255/2;
+    	obr_2D.clearRect(0,0,X,Y);
+    	X = X*skala1/255;
+		Y =  Y*skala1/255;
+		obr_2D.clearRect(0,0,X,Y);
+    	obr_2D.drawImage(img,poczX,poczY,X,Y,this);
+	}
+}
