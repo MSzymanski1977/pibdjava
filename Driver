@@ -1,0 +1,166 @@
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import javax.swing.*;
+
+import javax.swing.JFileChooser;
+
+public class Driver extends JPanel{
+	boolean koniec=true;
+	String wybor;
+	JFileChooser chooser;
+	int licznik=0;
+	  List<Katalogowanie> lista_plikow=new ArrayList<Katalogowanie>();
+    List<Katalogowanie> lista_katalogow = new ArrayList<Katalogowanie>(); 
+	File plik,plik1 = null;
+  String[] nazwy = null;
+  File[] pliki,pliki1 = null;
+	
+	public Driver(int liczba, String kier) {
+	String nazwa_kat = Integer.toString(liczba);
+		chooser = new JFileChooser(); 
+	    chooser.setCurrentDirectory(new java.io.File("."));
+	    chooser.setDialogTitle(wybor);
+	    chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+	    chooser.setAcceptAllFileFilterUsed(false);
+	    if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) { 
+	    	plik = new File(chooser.getSelectedFile().getPath());
+	    	pliki = plik.listFiles();
+	      }
+	    else {
+	      System.out.println("No Selection ");
+	      System.exit(0);
+	      }
+
+	try
+	{	
+      
+		plik1 = new File("d:\\kat"+nazwa_kat+".dat");
+		  plik1.createNewFile(); 
+		ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("d:\\kat"+nazwa_kat+".dat"));
+	
+	for (File pliczek:pliki)
+    {
+        if (pliczek.isDirectory())
+        {
+        	Katalogowanie katalogowanie = new Katalogowanie(pliczek.getName(),"katalog");
+        	File nast_katalog = new File(pliczek.getPath());
+    
+        	pliki1=nast_katalog.listFiles();
+        	
+        	//System.out.println(pliczek.getName()+" "+pliczek.getPath());
+        	
+        	if (pliki1!=null)
+        	{
+        	for (File pliczek1:pliki1)
+        	{
+        		if (pliczek1.isFile()) 
+        		{
+        			katalogowanie.dopisznazwePliku(pliczek1.getName());
+        		}
+        		if (pliczek1.isDirectory()) 
+        		{
+        			katalogowanie.dopisznazweKatalogu(pliczek1.getName());
+        		}
+        		
+        	}
+        	}
+        	oos.writeObject(katalogowanie);
+        }
+    
+        if (pliczek.isFile())  
+        {
+        	Katalogowanie katalogowanie = new Katalogowanie(pliczek.getName(),"plik");
+        	oos.writeObject(katalogowanie);
+        	
+        }
+        licznik++;
+    }
+	oos.close();
+	}
+	catch (IOException exc)
+	{
+		System.err.println("Blad zapisu"); 
+		exc.printStackTrace();
+	}
+	
+	
+//for(int l=0;l<=liczba;l++)
+//{
+	lista_katalogow.clear();
+	lista_plikow.clear();
+	try
+	{	
+      
+		plik1 = new File("d:\\kat"+Integer.toString(liczba)+".dat");
+		ObjectInputStream oos = new ObjectInputStream(new FileInputStream("d:\\kat"+Integer.toString(liczba)+".dat"));	
+		for (int i=0;i<licznik;i++)
+		{
+			Katalogowanie katalogowanie = (Katalogowanie)oos.readObject();
+	
+			String string=katalogowanie.wypiszTyp();
+			if (string.equals("katalog"))
+			{
+				lista_katalogow.add(katalogowanie);
+			}
+		
+			if (string.equals("plik")) 
+			{	
+				lista_plikow.add(katalogowanie);
+			}
+		}
+		oos.close();
+	
+		}
+		catch (IOException exc)
+		{
+			System.err.println("Blad odczytu"); 
+			exc.printStackTrace();
+		}
+		catch (ClassNotFoundException exc)
+		{
+		
+		}
+	if (kier.equals("0"))
+	{
+		Collections.sort(lista_katalogow,new Komparator());
+		Collections.sort(lista_plikow,new Komparator());
+	}
+	if (kier.equals("1"))
+	{
+		Collections.sort(lista_katalogow,new Komparator_odw());
+		Collections.sort(lista_plikow,new Komparator_odw());
+	}
+	
+    System.out.println(chooser.getSelectedFile().getPath());
+    for (int i=0;i<lista_katalogow.size();i++)
+    {
+    	
+    	System.out.println("| + "+lista_katalogow.get(i).wypiszNazwe());
+    	if (kier.equals("0")) lista_katalogow.get(i).sortLists();
+    	if (kier.equals("1")) lista_katalogow.get(i).sortLists_odw();
+    	for (int j=0;j<lista_katalogow.get(i).rozmiarPodkatalogow();j++)
+    	{
+    		System.out.println("|      | + "+lista_katalogow.get(i).wypiszPodkatalog(j));
+    	}
+    	for (int j=0;j<lista_katalogow.get(i).rozmiarPlikowwKatalogu();j++)
+    	{
+    		System.out.println("|      | - "+lista_katalogow.get(i).wypiszPlikwKatalogu(j));
+    	}
+    
+    }
+    for (int i=0;i<lista_plikow.size();i++)
+    {
+    	
+    	System.out.println("| - "+lista_plikow.get(i).wypiszNazwe());
+    }
+    
+	}
+	//}
+}
