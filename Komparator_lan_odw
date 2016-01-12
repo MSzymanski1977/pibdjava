@@ -1,0 +1,10 @@
+import java.util.Comparator;
+ 
+public class Komparator_lan_odw implements Comparator<String>
+{
+ 
+    @Override
+    public int compare(String lan1, String lan2) {
+    	return lan2.compareTo(lan1);
+    }
+}
