@@ -1,0 +1,104 @@
+import java.io.*;
+import java.util.*;
+import javax.swing.*;
+import java.awt.event.*;
+import java.awt.*;
+import java.util.*;
+
+public class Katalogowanie implements Serializable {
+	 
+	
+	String nazwa_pliku;
+    String rodzaj;
+    ArrayList<String> pliki_w_katalogu;
+    ArrayList<String> podkatalogi;
+    
+	public Katalogowanie (String name, String type)  
+	{
+	    nazwa_pliku=name;
+		rodzaj=type;
+		pliki_w_katalogu=new ArrayList<String>();
+		podkatalogi=new ArrayList<String>();      
+	}
+	
+	public void dopisznazwePliku(String nazwa_kolejnego_pliku)
+	{
+		pliki_w_katalogu.add(nazwa_kolejnego_pliku);
+	}
+	public void dopisznazweKatalogu(String nazwa_podkatalogu)
+	{
+		podkatalogi.add(nazwa_podkatalogu);
+	}
+	public String wypiszNazwe()
+	{
+		return nazwa_pliku;
+	}
+	public String wypiszTyp()
+	{
+		return rodzaj;
+	}
+	public String wypiszPodkatalog(int k)
+	{
+		return podkatalogi.get(k);
+	} 
+	public String wypiszPlikwKatalogu(int k)
+	{
+		return pliki_w_katalogu.get(k);
+	} 
+	public int rozmiarPodkatalogow()
+	{
+		return podkatalogi.size();
+	} 
+	public int rozmiarPlikowwKatalogu()
+	{
+		return pliki_w_katalogu.size();
+	}
+	public void sortLists()
+	{
+		Collections.sort(podkatalogi);
+		Collections.sort(pliki_w_katalogu);
+	} 
+	public void sortLists_odw()
+	{
+		Collections.sort(podkatalogi,new Komparator_lan_odw());
+		Collections.sort(pliki_w_katalogu,new Komparator_lan_odw());
+	} 
+	public static void main(String[] args)  throws IOException
+	{
+		boolean koniec=false;
+        int liczba = 0;
+		if (args.length==0)
+		{	
+			while (!koniec)
+			{
+				Driver driver=new Driver(liczba,"1");
+				liczba++;
+			}
+		}	
+        if (args.length==1)
+        {
+        	 String kierunek=args[0];
+        	
+        	 while (!koniec)
+        	 {
+        		 System.out.println(kierunek);
+        		 if (kierunek.equals("0"))
+        		 {
+        			 Driver driver=new Driver(liczba,kierunek);
+        			 liczba++;
+        		 }
+        		 if (kierunek.equals("1"))
+        		 {
+        			 Driver driver=new Driver(liczba,kierunek);
+        			 liczba++;
+        		 }
+        	 }
+        }
+            	
+        
+    }
+        	
+		
+	}
+
+
