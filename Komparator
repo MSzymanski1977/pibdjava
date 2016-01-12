@@ -1,0 +1,11 @@
+
+import java.util.Comparator;
+ 
+public class Komparator implements Comparator<Katalogowanie>
+{
+ 
+    @Override
+    public int compare(Katalogowanie kat1, Katalogowanie kat2) {
+    	return kat1.wypiszNazwe().compareTo(kat2.wypiszNazwe());
+    }
+}
